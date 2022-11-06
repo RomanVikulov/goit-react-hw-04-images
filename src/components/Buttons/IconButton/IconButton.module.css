@@ -1,0 +1,22 @@
+.button_icon {
+    display: inline-flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    color: rgba(42, 42, 42, 0.5);
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    outline: none;
+}
+
+.button_icon:hover,
+.button_icon:focus {
+    color: #3f93b9;
+}
+
+.button_icon>svg {
+    fill: currentColor;
+}
