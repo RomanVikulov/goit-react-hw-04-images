@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import fetchImages from '../services/apiService';
 import Searchbar from '../Searchbar/Searchbar';
 import Title from '../Title/Title';
-import ImageGalleryList from '../ImageGallery/ImageGalleryList/ImageGalleryList';
+import ImageGalleryList from '../ImageGalleryList/ImageGalleryList';
 import TextButton from '../Buttons/TextButton/TextButton';
 import Modal from '../Modal/Modal';
 import NotiflixLoading from '../Loader/NotiflixLoading';
@@ -17,37 +17,19 @@ const INITIAL_STATE = {
   searchQuery: '',
   currentPage: 1,
   pageSize: 12,
-  total: 0,
-  totalHits: 0,
   isLoading: false,
   showModal: false,
-  // modalImg: '',
-  // modalDescr: '',
   error: null,
 };
 
 class App extends Component {
   state = { ...INITIAL_STATE };
 
-  async componentDidMount() {
-    try {
-      this.setState({ isLoading: true });
-
-      if (this.state.searchQuery === '') {
-        return;
-      }
-
-      const { data } = await fetchImages();
-      this.setState({ data });
-    } catch (error) {
-      this.setState({ error });
-    } finally {
-      this.setState({ isLoading: false });
-    }
-  }
-
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.searchQuery !== this.state.searchQuery) {
+    if (
+      prevState.searchQuery !== this.state.searchQuery ||
+      prevState.currentPage !== this.state.currentPage
+    ) {
       this.getImages();
     }
   }
@@ -56,16 +38,15 @@ class App extends Component {
     const { currentPage, searchQuery, pageSize } = this.state;
     const options = { searchQuery, currentPage, pageSize };
     this.setState({ isLoading: true });
+
     try {
       const { data } = await fetchImages(options);
       this.setState(prevState => ({
-        images: [...data.hits],
+        images: [...prevState.images, ...data.hits],
         total: data.total,
         totalHits: data.totalHits,
-        currentPage: prevState.currentPage + 1,
         error: null,
       }));
-
       this.handleMessages(data);
     } catch (error) {
       this.setState({ error });
@@ -80,7 +61,7 @@ class App extends Component {
   };
 
   handleLoadMore = () => {
-    this.getImages();
+    this.incrementPage();
   };
 
   handleMessages = data => {
@@ -100,6 +81,12 @@ class App extends Component {
   toggleModal = () => {
     this.setState(({ showModal }) => ({
       showModal: !showModal,
+    }));
+  };
+
+  incrementPage = () => {
+    this.setState(prevState => ({
+      currentPage: prevState.currentPage + 1,
     }));
   };
 
