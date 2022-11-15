@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useEffect } from 'react';
 import css from './Modal.module.css';
 
 const Modal = ({ onClick, modalImg, modalDescr }) => {
