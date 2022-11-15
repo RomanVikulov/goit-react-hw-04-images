@@ -1,41 +1,39 @@
 import React, { Component } from 'react';
 import css from './Modal.module.css';
 
-export default class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown);
-  }
+const Modal = ({ onClick, modalImg, modalDescr }) => {
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if (e.code === 'Escape') {
+        onClick();
+      }
+    };
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown);
-  }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClick]);
 
-  handleKeyDown = e => {
-    if (e.code === 'Escape') {
-      this.props.onClick();
-    }
-  };
-
-  handleBackdropClick = e => {
+  const handleBackdropClick = e => {
     if (e.currentTarget === e.target) {
-      this.props.onClick();
+      onClick();
     }
   };
 
-  render() {
-    const { modalImg, modalDescr } = this.props;
-    return (
-      <div className={css.backdrop} onClick={this.handleBackdropClick}>
-        <div className={css.modal}>
-          <img
-            className={css.modal_image}
-            src={modalImg}
-            alt={modalDescr}
-            width="1280"
-            height="960"
-          />
-        </div>
+  return (
+    <div className={css.backdrop} onClick={handleBackdropClick}>
+      <div className={css.modal}>
+        <img
+          className={css.modal_image}
+          src={modalImg}
+          alt={modalDescr}
+          width="1280"
+          height="960"
+        />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+export default Modal;
